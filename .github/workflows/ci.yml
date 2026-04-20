@@ -1,0 +1,53 @@
+name: QA Template CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run API smoke tests
+        run: pytest -m "api and smoke" -n auto --alluredir=allure-results
+
+      - name: Run API regression tests
+        run: pytest -m "api and regression" -n auto --alluredir=allure-results
+
+      - name: Run web smoke tests
+        env:
+          BASE_URL: https://the-internet.herokuapp.com
+          HEADLESS: "true"
+        run: pytest -m "web and smoke" --alluredir=allure-results
+
+      - name: Run web regression tests
+        env:
+          BASE_URL: https://the-internet.herokuapp.com
+          HEADLESS: "true"
+        run: pytest -m "web and regression" --alluredir=allure-results
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/
+          retention-days: 14

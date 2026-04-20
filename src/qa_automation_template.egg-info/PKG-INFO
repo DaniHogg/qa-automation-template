@@ -1,0 +1,88 @@
+Metadata-Version: 2.4
+Name: qa-automation-template
+Version: 0.1.0
+Summary: General-purpose pytest automation framework template for web, API, and mobile
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: pytest>=8.0.0
+Requires-Dist: pytest-xdist>=3.6.0
+Requires-Dist: allure-pytest>=2.13.0
+Requires-Dist: requests>=2.31.0
+Requires-Dist: selenium>=4.18.0
+
+# QA Automation Template (Pytest)
+
+A general-purpose automation framework template designed for portfolio and real project use. It includes:
+
+- Page Object Model structure for UI testing
+- Shared fixtures and environment-driven config
+- Allure reporting support
+- Parallel execution with pytest-xdist
+- A sample test suite for web and API
+- CI workflow with GitHub Actions
+
+## Tech Stack
+
+- Python + pytest
+- Selenium (web example)
+- requests (API example)
+- allure-pytest (reporting)
+- pytest-xdist (parallel execution)
+
+## Project Structure
+
+```text
+qa-automation-template/
+  src/
+    core/         # config, drivers, utilities
+    pages/        # web page objects
+    clients/      # API clients
+    mobile/       # mobile placeholders
+  tests/
+    web/
+    api/
+    mobile/
+  config/
+  .github/workflows/
+```
+
+## Quick Start
+
+1. Create and activate a virtual environment.
+2. Install dependencies:
+
+```bash
+pip install -e .
+```
+
+3. Run all tests:
+
+```bash
+pytest
+```
+
+4. Run in parallel:
+
+```bash
+pytest -n auto
+```
+
+5. Generate Allure report (requires Allure CLI installed):
+
+```bash
+allure serve allure-results
+```
+
+## Environment Variables
+
+- `BASE_URL` (default: `https://example.com`)
+- `API_BASE_URL` (default: `https://jsonplaceholder.typicode.com`)
+- `BROWSER` (default: `chrome`)
+- `HEADLESS` (`true` or `false`, default: `true`)
+
+## Portfolio Tips
+
+- Add real-world scenarios in `tests/` with clear markers (`smoke`, `regression`).
+- Add test data factories and richer assertions.
+- Add a `Makefile` or task runner scripts if desired.
+- Include screenshots, flaky test handling, and failure artifacts.
