@@ -14,9 +14,6 @@ Set the WINAPPDRIVER_URL env var if WinAppDriver runs on a different host/port
 import sys
 import pytest
 
-from clients.winapp_client import WinAppClient
-from pages.notepad_page import NotepadPage
-
 NOTEPAD_APP = r"C:\Windows\System32\notepad.exe"
 
 windows_only = pytest.mark.skipif(
@@ -28,6 +25,10 @@ windows_only = pytest.mark.skipif(
 @pytest.fixture(scope="function")
 def notepad(request):
     """Launch Notepad and yield a NotepadPage; quit the app after the test."""
+    pytest.importorskip("appium", reason="Install optional dependency: pip install -e .[windows]")
+    from clients.winapp_client import WinAppClient
+    from pages.notepad_page import NotepadPage
+
     client = WinAppClient(app=NOTEPAD_APP)
     page = NotepadPage(client.driver)
     yield page
