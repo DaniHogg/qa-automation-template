@@ -1,6 +1,6 @@
 import pytest
 
-from tests.winapp.conftest import windows_only
+from tests.reference.winapp.conftest import windows_only
 
 
 @pytest.mark.winapp

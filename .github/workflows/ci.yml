@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -26,19 +27,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .
 
+      - name: Run unit tests
+        run: pytest -m "unit" --alluredir=allure-results
+
       - name: Run API smoke tests
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: pytest -m "api and smoke" -n auto --alluredir=allure-results
 
       - name: Run API regression tests
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: pytest -m "api and regression" -n auto --alluredir=allure-results
 
       - name: Run web smoke tests
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         env:
           BASE_URL: https://the-internet.herokuapp.com
           HEADLESS: "true"
         run: pytest -m "web and smoke" --alluredir=allure-results
 
       - name: Run web regression tests
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         env:
           BASE_URL: https://the-internet.herokuapp.com
           HEADLESS: "true"
@@ -50,4 +58,13 @@ jobs:
         with:
           name: allure-results
           path: allure-results/
+          retention-days: 14
+
+      - name: Upload failure screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/
+          if-no-files-found: ignore
           retention-days: 14

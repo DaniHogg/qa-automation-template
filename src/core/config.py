@@ -14,6 +14,8 @@ class Settings:
     api_base_url: str = os.getenv("API_BASE_URL", "https://jsonplaceholder.typicode.com")
     browser: str = os.getenv("BROWSER", "chrome")
     headless: bool = _as_bool(os.getenv("HEADLESS", "true"), default=True)
+    login_username: str = os.getenv("LOGIN_USERNAME", "tomsmith")
+    login_password: str = os.getenv("LOGIN_PASSWORD", "SuperSecretPassword!")
 
 
 settings = Settings()

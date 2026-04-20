@@ -17,6 +17,7 @@ htmlcov/
 allure-results/
 allure-report/
 reports/
+screenshots/
 
 # IDE and OS
 .vscode/

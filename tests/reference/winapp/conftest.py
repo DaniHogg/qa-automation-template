@@ -5,7 +5,7 @@ Prerequisites (Windows only):
   1. Download and run WinAppDriver:
      https://github.com/microsoft/WinAppDriver/releases
   2. Install Appium-Python-Client:
-     pip install Appium-Python-Client
+     pip install -e ".[windows]"
 
 Tests in this folder are skipped automatically on non-Windows platforms.
 Set the WINAPPDRIVER_URL env var if WinAppDriver runs on a different host/port
