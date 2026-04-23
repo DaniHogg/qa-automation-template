@@ -1,6 +1,8 @@
 import logging
 
+import allure
 import pytest
+from allure_commons.types import AttachmentType
 
 from clients.http_client import HttpClient
 from core.config import settings
@@ -42,10 +44,16 @@ def invalid_login_credentials():
 def driver(request):
     browser = build_web_driver()
     yield browser
-    if request.node.rep_call is not None and request.node.rep_call.failed:
+    # rep_call is absent when setup fails or test is skipped before call phase.
+    rep_call = getattr(request.node, "rep_call", None)
+    if rep_call is not None and rep_call.failed:
         path = _take_screenshot(browser, request.node.nodeid)
         if path:
-            pytest.attach = str(path)  # consumed by allure hook below
+            allure.attach.file(
+                str(path),
+                name="failure-screenshot",
+                attachment_type=AttachmentType.PNG,
+            )
     browser.quit()
 
 
