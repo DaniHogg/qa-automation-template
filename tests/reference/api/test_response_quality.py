@@ -19,5 +19,6 @@ def test_response_content_type_is_json(api_headers):
 def test_response_time_under_threshold(api_headers):
     client = HttpClient()
     response = client.get("posts", headers=api_headers, timeout=TIMEOUT)
+    assert response.status_code == 200
     elapsed = response.elapsed.total_seconds()
     assert elapsed < 3.0, f"Response took {elapsed:.2f}s — exceeded 3s threshold"
