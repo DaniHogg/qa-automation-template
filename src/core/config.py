@@ -10,7 +10,7 @@ def _as_bool(value: str, default: bool = True) -> bool:
 
 @dataclass(frozen=True)
 class Settings:
-    base_url: str = os.getenv("BASE_URL", "https://the-internet.herokuapp.com")
+    base_url: str = os.getenv("BASE_URL", "https://danihogg.github.io/qa-portfolio-livesite/")
     api_base_url: str = os.getenv("API_BASE_URL", "https://jsonplaceholder.typicode.com")
     browser: str = os.getenv("BROWSER", "chrome")
     headless: bool = _as_bool(os.getenv("HEADLESS", "true"), default=True)

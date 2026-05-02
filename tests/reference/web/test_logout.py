@@ -1,17 +1,15 @@
 import pytest
+from selenium.webdriver.common.by import By
 
-from pages.example_page import LoginPage
-from pages.secure_area_page import SecureAreaPage
+from pages.portfolio_page import PortfolioHomePage
 
 
 @pytest.mark.web
 @pytest.mark.regression
-def test_logout_redirects_to_login(driver, valid_login_credentials):
-    login = LoginPage(driver)
-    login.open()
-    login.login(valid_login_credentials["username"], valid_login_credentials["password"])
+def test_detail_back_link_returns_to_dashboard(driver):
+    home = PortfolioHomePage(driver)
+    home.open()
+    home.open_first_project_detail()
 
-    secure = SecureAreaPage(driver)
-    secure.logout()
-
-    assert "/login" in driver.current_url
+    driver.find_element(By.CSS_SELECTOR, ".back-link").click()
+    assert "index.html" in driver.current_url or driver.current_url.rstrip("/").endswith("qa-portfolio-livesite")

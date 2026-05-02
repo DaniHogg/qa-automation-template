@@ -1,12 +1,15 @@
 import pytest
 
-from pages.dropdown_page import DropdownPage
+from pages.portfolio_page import PortfolioHomePage, PortfolioProjectPage
 
 
 @pytest.mark.web
 @pytest.mark.regression
 def test_dropdown_select_option_1(driver):
-    page = DropdownPage(driver)
-    page.open()
-    page.select_by_value("1")
-    assert page.selected_option_text() == "Option 1"
+    home = PortfolioHomePage(driver)
+    home.open()
+    home.open_first_project_detail()
+
+    detail = PortfolioProjectPage(driver)
+    history_count = len(detail.history_rows())
+    assert 1 <= history_count <= 5

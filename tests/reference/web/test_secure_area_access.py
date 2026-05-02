@@ -1,16 +1,14 @@
 import pytest
 
-from pages.example_page import LoginPage
-from pages.secure_area_page import SecureAreaPage
+from pages.portfolio_page import PortfolioHomePage, PortfolioProjectPage
 
 
 @pytest.mark.web
 @pytest.mark.regression
-def test_secure_area_accessible_after_login(driver, valid_login_credentials):
-    login = LoginPage(driver)
-    login.open()
-    login.login(valid_login_credentials["username"], valid_login_credentials["password"])
+def test_project_detail_shows_suite_rows(driver):
+    home = PortfolioHomePage(driver)
+    home.open()
+    home.open_first_project_detail()
 
-    secure = SecureAreaPage(driver)
-    assert secure.is_on_secure_area()
-    assert "Secure Area" in secure.heading_text()
+    detail = PortfolioProjectPage(driver)
+    assert len(detail.suite_rows()) >= 1

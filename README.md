@@ -86,26 +86,27 @@ Target API: `jsonplaceholder.typicode.com`
   - Filtering and query parameters
 
 ### Web UI Tests
-Target site: `the-internet.herokuapp.com`
+Target site: `danihogg.github.io/qa-portfolio-livesite`
 
-- Smoke
-  - Home page availability
-  - Core navigation checks
-- Structured using Page Object Model
-- Designed to run headless in CI
-
----
+- Smoke and regression checks validate portfolio dashboard and project-detail pages.
+- Structured using Page Object Model.
+- One coverage-link assertion test is skip-gated when the target deployment does not yet include the coverage panel.
+- Designed to run headless in CI.
 
 ## ⚙️ Configuration & Environment Variables
 
 | Variable | Default | Description |
 |--------|--------|-------------|
-| BASE_URL | https://the-internet.herokuapp.com | Web target |
+| BASE_URL | https://danihogg.github.io/qa-portfolio-livesite/ | Web target |
 | API_BASE_URL | https://jsonplaceholder.typicode.com | API target |
 | BROWSER | chrome | chrome or firefox |
 | HEADLESS | true | CI-friendly execution |
 
----
+### CI Lanes
+- `quick-linux` (push/pull request): unit + API smoke + web smoke against portfolio site.
+- `full-linux` (workflow_dispatch/schedule): unit + core/reference API smoke/regression + web smoke/regression against portfolio site.
+- `winapp-windows` (workflow_dispatch/schedule): Windows desktop reference tests with WinAppDriver.
+- `merge-allure`: merges all available lane artifacts into `allure-results` for downstream portfolio ingestion.
 
 ## 🚀 Running the Tests
 
@@ -125,24 +126,22 @@ pytest -m "api and smoke" -n auto
 
 # Run web regression tests
 pytest -m "web and regression"
+```
 
-
-📊 Reporting
+## 📊 Reporting
 
 Allure reports generated during execution
 CI uploads test artefacts for visibility
 Designed for fast triage, not just “pretty output”
 
-
-🧭 What This Repo Intentionally Does NOT Do
+## 🧭 What This Repo Intentionally Does NOT Do
 
 Hard-code waits or sleeps
 Hide complexity in magic helpers
 Use brittle locators without justification
 Assume a single environment or execution mode
 
-
-✅ How to Review This Repo
+## ✅ How to Review This Repo
 If you’re reviewing this repository:
 
 Start with src/core to see how drivers and config are handled
@@ -150,8 +149,7 @@ Look at clients/HttpClient for API abstraction
 Review Web vs API test separation
 Check .github/workflows/ci.yml for execution strategy
 
-
-📌 Related Repositories
+## 📌 Related Repositories
 
 Postman-API-Tests – API testing using Postman collections
 Selenium – Focused Selenium + pytest examples

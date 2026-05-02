@@ -1,12 +1,11 @@
 import pytest
 
-from pages.example_page import ExamplePage
+from pages.portfolio_page import PortfolioHomePage
 
 
 @pytest.mark.web
 @pytest.mark.smoke
 def test_home_page_lists_examples(driver):
-    page = ExamplePage(driver)
-    page.open_home()
-    examples = page.available_examples()
-    assert len(examples) >= 10, "Expected at least 10 example links on home page"
+    page = PortfolioHomePage(driver)
+    page.open()
+    assert len(page.project_cards()) >= 1, "Expected at least one project card"

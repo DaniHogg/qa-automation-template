@@ -5,9 +5,12 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
 
 jobs:
-  test:
+  quick-linux:
+    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -31,28 +34,139 @@ jobs:
         run: pytest -m "unit" --alluredir=allure-results
 
       - name: Run API smoke tests
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: pytest -m "api and smoke" -n auto --alluredir=allure-results
-
-      - name: Run API regression tests
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: pytest -m "api and regression" -n auto --alluredir=allure-results
+        run: pytest tests/api -m "api and smoke" -n auto --alluredir=allure-results
 
       - name: Run web smoke tests
-        if: ${{ github.event_name == 'workflow_dispatch' }}
         env:
-          BASE_URL: https://the-internet.herokuapp.com
+          BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
           HEADLESS: "true"
-        run: pytest -m "web and smoke" --alluredir=allure-results
+        run: pytest tests/reference/web -m "web and smoke" --alluredir=allure-results
 
-      - name: Run web regression tests
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+      - name: Upload quick allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-quick-linux
+          path: allure-results/
+          retention-days: 14
+
+  full-linux:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run unit tests
+        run: pytest -m "unit" --alluredir=allure-results
+
+      - name: Run API smoke tests (core + reference)
+        run: pytest tests/api tests/reference/api -m "api and smoke" -n auto --alluredir=allure-results
+
+      - name: Run API regression tests (core + reference)
+        run: pytest tests/api tests/reference/api -m "api and regression" -n auto --alluredir=allure-results
+
+      - name: Run web smoke tests against portfolio site
         env:
-          BASE_URL: https://the-internet.herokuapp.com
+          BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
           HEADLESS: "true"
-        run: pytest -m "web and regression" --alluredir=allure-results
+        run: pytest tests/reference/web -m "web and smoke" --alluredir=allure-results
 
-      - name: Upload Allure results
+      - name: Run web regression tests against portfolio site
+        env:
+          BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
+          HEADLESS: "true"
+        run: pytest tests/reference/web -m "web and regression" --alluredir=allure-results
+
+      - name: Upload full linux allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-full-linux
+          path: allure-results/
+          retention-days: 14
+
+      - name: Upload full linux failure screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-full-linux
+          path: screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  winapp-windows:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[windows]"
+
+      - name: Install and start WinAppDriver
+        shell: pwsh
+        run: |
+          choco install winappdriver --no-progress -y
+          $exe = "${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe"
+          Start-Process -FilePath $exe -ArgumentList "127.0.0.1 4723/wd/hub"
+
+      - name: Run WinApp tests
+        env:
+          WINAPPDRIVER_URL: http://127.0.0.1:4723
+        run: pytest tests/reference/winapp -m "winapp" --alluredir=allure-results
+
+      - name: Upload winapp allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-winapp
+          path: allure-results/
+          retention-days: 14
+
+  merge-allure:
+    if: always()
+    needs: [quick-linux, full-linux, winapp-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all available allure artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: merged-artifacts
+          merge-multiple: true
+
+      - name: Assemble merged allure-results
+        run: |
+          mkdir -p allure-results
+          find merged-artifacts -type f -name "*.json" -exec cp {} allure-results/ \;
+
+      - name: Upload merged allure results
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -60,7 +174,7 @@ jobs:
           path: allure-results/
           retention-days: 14
 
-      - name: Upload failure screenshots
+      - name: Upload merged screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -68,3 +182,32 @@ jobs:
           path: screenshots/
           if-no-files-found: ignore
           retention-days: 14
+
+  notify-live-site:
+    if: ${{ always() && github.event_name != 'pull_request' && needs.merge-allure.result == 'success' && vars.PORTFOLIO_SITE_REPO != '' && secrets.PORTFOLIO_SITE_TOKEN != '' }}
+    needs: [merge-allure]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dispatch live-site refresh
+        env:
+          GH_TOKEN: ${{ secrets.PORTFOLIO_SITE_TOKEN }}
+        run: |
+          curl --fail-with-body -L -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            https://api.github.com/repos/${{ vars.PORTFOLIO_SITE_REPO }}/dispatches \
+            -d @- <<JSON
+          {
+            "event_type": "portfolio-results-ready",
+            "client_payload": {
+              "source_repo": "${{ github.repository }}",
+              "source_workflow": "ci.yml",
+              "source_branch": "${{ github.ref_name }}",
+              "source_artifact": "allure-results",
+              "source_run_id": "${{ github.run_id }}",
+              "source_run_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "source_commit_sha": "${{ github.sha }}"
+            }
+          }
+          JSON

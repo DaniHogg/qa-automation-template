@@ -1,11 +1,11 @@
 import pytest
 
-from pages.example_page import ExamplePage
+from pages.portfolio_page import PortfolioHomePage
 
 
 @pytest.mark.web
 @pytest.mark.smoke
 def test_home_page_has_heading(driver):
-    page = ExamplePage(driver)
-    page.open_home()
-    assert page.heading_text(), "Expected non-empty page heading"
+    page = PortfolioHomePage(driver)
+    page.open()
+    assert "Live Test Evidence Dashboard" in page.heading_text()

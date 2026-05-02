@@ -1,13 +1,12 @@
 import pytest
 
-from pages.checkboxes_page import CheckboxesPage
+from pages.portfolio_page import PortfolioHomePage
 
 
 @pytest.mark.web
 @pytest.mark.regression
 def test_checkbox_can_be_toggled(driver):
-    page = CheckboxesPage(driver)
+    page = PortfolioHomePage(driver)
     page.open()
-    initial_state = page.is_checked(0)
-    page.toggle(0)
-    assert page.is_checked(0) != initial_state, "Checkbox state should change after toggle"
+    card_text = page.project_cards()[0].text
+    assert "Fresh" in card_text or "Stale" in card_text
