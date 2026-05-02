@@ -184,7 +184,7 @@ jobs:
           retention-days: 14
 
   notify-live-site:
-    if: ${{ always() && github.event_name != 'pull_request' && needs.merge-allure.result == 'success' && vars.PORTFOLIO_SITE_REPO != '' && secrets.PORTFOLIO_SITE_TOKEN != '' }}
+    if: ${{ always() && github.event_name != 'pull_request' && needs.merge-allure.result == 'success' && vars.PORTFOLIO_SITE_REPO != '' }}
     needs: [merge-allure]
     runs-on: ubuntu-latest
 
