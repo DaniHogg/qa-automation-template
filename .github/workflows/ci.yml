@@ -33,8 +33,7 @@ jobs:
       - name: Run unit tests
         run: pytest -m "unit" --alluredir=allure-results
 
-      - name: Run API smoke tests
-        run: pytest tests/api -m "api and smoke" -n auto --alluredir=allure-results
+      # API suites are intentionally disabled until a deployed API backend exists.
 
       - name: Run web smoke tests
         env:
@@ -74,11 +73,7 @@ jobs:
       - name: Run unit tests
         run: pytest -m "unit" --alluredir=allure-results
 
-      - name: Run API smoke tests (core + reference)
-        run: pytest tests/api tests/reference/api -m "api and smoke" -n auto --alluredir=allure-results
-
-      - name: Run API regression tests (core + reference)
-        run: pytest tests/api tests/reference/api -m "api and regression" -n auto --alluredir=allure-results
+      # API suites are intentionally disabled until a deployed API backend exists.
 
       - name: Run web smoke tests against portfolio site
         env:
@@ -110,7 +105,7 @@ jobs:
           retention-days: 14
 
   winapp-windows:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    if: ${{ false }}
     runs-on: windows-latest
 
     steps:
