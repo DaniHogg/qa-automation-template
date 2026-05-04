@@ -12,4 +12,4 @@ def test_detail_back_link_returns_to_dashboard(driver):
     home.open_first_project_detail()
 
     driver.find_element(By.CSS_SELECTOR, ".back-link").click()
-    assert "index.html" in driver.current_url or driver.current_url.rstrip("/").endswith("qa-portfolio-livesite")
+    assert "dashboard.html" in driver.current_url

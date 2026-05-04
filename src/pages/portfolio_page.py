@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from urllib.parse import urljoin, urlparse
 
 from core.config import settings
 from pages.base_page import BasePage
@@ -14,8 +15,17 @@ class PortfolioHomePage(BasePage):
     DETAIL_LINKS = (By.CSS_SELECTOR, "#project-cards a[href*='project.html?project=']")
     WORKFLOW_LINKS = (By.CSS_SELECTOR, "#project-cards a[target='_blank']")
 
+    @staticmethod
+    def _dashboard_url() -> str:
+        base = settings.base_url
+        path = urlparse(base).path.lower()
+        if path.endswith("dashboard.html"):
+            return base
+        normalized = base if base.endswith("/") else f"{base}/"
+        return urljoin(normalized, "dashboard.html")
+
     def open(self):
-        super().open(settings.base_url)
+        super().open(self._dashboard_url())
 
     def heading_text(self) -> str:
         return self.text_of(self.TITLE)

@@ -8,4 +8,4 @@ from pages.portfolio_page import PortfolioHomePage
 def test_login_page_title(driver):
     page = PortfolioHomePage(driver)
     page.open()
-    assert "QA Portfolio Evidence" in driver.title
+    assert "Live Automation Results" in driver.title

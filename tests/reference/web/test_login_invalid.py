@@ -8,4 +8,4 @@ from pages.portfolio_page import PortfolioHomePage
 def test_home_lede_explains_dashboard_scope(driver):
     page = PortfolioHomePage(driver)
     page.open()
-    assert "Status, freshness" in page.lede_text()
+    assert "Latest CI run status" in page.lede_text()
