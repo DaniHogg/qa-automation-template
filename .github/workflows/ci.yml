@@ -33,11 +33,11 @@ jobs:
       - name: Run unit tests
         run: pytest -m "unit" --alluredir=allure-results
 
-- name: Run api smoke tests
-          env:
-            API_BASE_URL: https://jsonplaceholder.typicode.com
-            API_TARGET_PROFILE: jsonplaceholder
-          run: pytest tests/api tests/reference/api -m "api and smoke" --alluredir=allure-results
+      - name: Run api smoke tests
+        env:
+          API_BASE_URL: https://jsonplaceholder.typicode.com
+          API_TARGET_PROFILE: jsonplaceholder
+        run: pytest tests/api tests/reference/api -m "api and smoke" --alluredir=allure-results
 
       - name: Run web smoke tests
         env:
@@ -78,21 +78,21 @@ jobs:
       - name: Run unit tests
         run: pytest -m "unit" --alluredir=allure-results
 
-        - name: Run api smoke tests
-          env:
-            API_BASE_URL: https://jsonplaceholder.typicode.com
-            API_TARGET_PROFILE: jsonplaceholder
-          run: pytest tests/api tests/reference/api -m "api and smoke" --alluredir=allure-results
+      - name: Run api smoke tests
+        env:
+          API_BASE_URL: https://jsonplaceholder.typicode.com
+          API_TARGET_PROFILE: jsonplaceholder
+        run: pytest tests/api tests/reference/api -m "api and smoke" --alluredir=allure-results
 
-        - name: Run api regression tests
-          env:
-            API_BASE_URL: https://jsonplaceholder.typicode.com
-            API_TARGET_PROFILE: jsonplaceholder
-          run: pytest tests/reference/api -m "api and regression" --alluredir=allure-results
-          BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
-          WEB_TARGET_PROFILE: qa_portfolio_live_site
-          HEADLESS: "true"
-        run: pytest tests/reference/web -m "web and smoke" --alluredir=allure-results
+      - name: Run api regression tests
+        env:
+          API_BASE_URL: https://jsonplaceholder.typicode.com
+          API_TARGET_PROFILE: jsonplaceholder
+        run: pytest tests/reference/api -m "api and regression" --alluredir=allure-results
+        BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
+        WEB_TARGET_PROFILE: qa_portfolio_live_site
+        HEADLESS: "true"
+      run: pytest tests/reference/web -m "web and smoke" --alluredir=allure-results
 
       - name: Run web regression tests against portfolio site
         env:
