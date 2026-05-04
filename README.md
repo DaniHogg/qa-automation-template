@@ -105,14 +105,24 @@ Target site: `danihogg.github.io/qa-portfolio-livesite`
 | WEB_TITLE_KEYWORDS | automation,results,evidence | Comma-separated keywords accepted for page-title checks |
 | WEB_LEDE_KEYWORDS | ci,status,workflow | Comma-separated keywords accepted for dashboard lede checks |
 | API_BASE_URL | https://jsonplaceholder.typicode.com | API target |
+| API_TARGET_PROFILE | jsonplaceholder | Contract profile for API endpoints/expectations |
+| API_REQUEST_TIMEOUT | 15 | Request timeout in seconds for all API calls |
+| API_SUCCESS_STATUS | 200 | Expected HTTP status code for successful API requests |
+| API_CREATED_STATUS | 201 | Expected HTTP status code for resource creation (POST) |
+| API_ACCEPTED_STATUS | 200 | Expected HTTP status code for accepted async operations |
+| API_NOT_FOUND_STATUS | 404 | Expected HTTP status code for not-found responses |
+| API_RESPONSE_TIME_THRESHOLD | 3.0 | Maximum allowed response time in seconds for performance checks |
+| API_MIN_LIST_ITEMS | 1 | Minimum number of items expected in list-response assertions |
+| API_CONTENT_TYPE | application/json | Expected Content-Type header in API responses |
 | BROWSER | chrome | chrome or firefox |
 | HEADLESS | true | CI-friendly execution |
 
-Web smoke/regression text checks are intent-based: tests assert that heading/title/lede include at least one profile keyword, rather than exact marketing copy.
+**Web tests** check heading/title/lede with intent-based keyword matching (configurable via comma-separated env vars), not exact copy.
+**API tests** are profile-driven: timeouts, status codes, and performance thresholds come from the contract, making it easy to adapt to different targets or service-level expectations.
 
 ### CI Lanes
 - `quick-linux` (push/pull request): unit + API smoke + web smoke against portfolio site.
-- `full-linux` (workflow_dispatch/schedule): unit + core/reference API smoke/regression + web smoke/regression against portfolio site.
+- `full-linux` (workflow_dispatch/schedule): unit + API smoke/regression + web smoke/regression against portfolio site.
 - `winapp-windows` (workflow_dispatch/schedule): Windows desktop reference tests with WinAppDriver.
 - `merge-allure`: merges all available lane artifacts into `allure-results` for downstream portfolio ingestion.
 

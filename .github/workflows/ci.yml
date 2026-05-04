@@ -33,7 +33,11 @@ jobs:
       - name: Run unit tests
         run: pytest -m "unit" --alluredir=allure-results
 
-      # API suites are intentionally disabled until a deployed API backend exists.
+- name: Run api smoke tests
+          env:
+            API_BASE_URL: https://jsonplaceholder.typicode.com
+            API_TARGET_PROFILE: jsonplaceholder
+          run: pytest tests/api tests/reference/api -m "api and smoke" --alluredir=allure-results
 
       - name: Run web smoke tests
         env:
@@ -74,10 +78,17 @@ jobs:
       - name: Run unit tests
         run: pytest -m "unit" --alluredir=allure-results
 
-      # API suites are intentionally disabled until a deployed API backend exists.
+        - name: Run api smoke tests
+          env:
+            API_BASE_URL: https://jsonplaceholder.typicode.com
+            API_TARGET_PROFILE: jsonplaceholder
+          run: pytest tests/api tests/reference/api -m "api and smoke" --alluredir=allure-results
 
-      - name: Run web smoke tests against portfolio site
-        env:
+        - name: Run api regression tests
+          env:
+            API_BASE_URL: https://jsonplaceholder.typicode.com
+            API_TARGET_PROFILE: jsonplaceholder
+          run: pytest tests/reference/api -m "api and regression" --alluredir=allure-results
           BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
           WEB_TARGET_PROFILE: qa_portfolio_live_site
           HEADLESS: "true"
