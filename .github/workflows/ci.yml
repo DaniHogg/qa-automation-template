@@ -38,6 +38,7 @@ jobs:
       - name: Run web smoke tests
         env:
           BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
+          WEB_TARGET_PROFILE: qa_portfolio_live_site
           HEADLESS: "true"
         run: pytest tests/reference/web -m "web and smoke" --alluredir=allure-results
 
@@ -78,12 +79,14 @@ jobs:
       - name: Run web smoke tests against portfolio site
         env:
           BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
+          WEB_TARGET_PROFILE: qa_portfolio_live_site
           HEADLESS: "true"
         run: pytest tests/reference/web -m "web and smoke" --alluredir=allure-results
 
       - name: Run web regression tests against portfolio site
         env:
           BASE_URL: https://danihogg.github.io/qa-portfolio-livesite/
+          WEB_TARGET_PROFILE: qa_portfolio_live_site
           HEADLESS: "true"
         run: pytest tests/reference/web -m "web and regression" --alluredir=allure-results
 

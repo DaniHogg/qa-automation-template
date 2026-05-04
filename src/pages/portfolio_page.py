@@ -9,20 +9,36 @@ from pages.base_page import BasePage
 class PortfolioHomePage(BasePage):
     TITLE = (By.TAG_NAME, "h1")
     LEDE = (By.CSS_SELECTOR, ".lede")
-    PROJECT_CARDS = (By.CSS_SELECTOR, "#project-cards .card")
-    STATUS_BADGES = (By.CSS_SELECTOR, "#project-cards .status")
-    STALE_LABELS = (By.CSS_SELECTOR, "#project-cards .stale")
-    DETAIL_LINKS = (By.CSS_SELECTOR, "#project-cards a[href*='project.html?project=']")
-    WORKFLOW_LINKS = (By.CSS_SELECTOR, "#project-cards a[target='_blank']")
+
+    def _project_cards_locator(self):
+        container = settings.web_contract.project_cards_container_selector
+        return (By.CSS_SELECTOR, f"{container} .card")
+
+    def _status_badges_locator(self):
+        container = settings.web_contract.project_cards_container_selector
+        return (By.CSS_SELECTOR, f"{container} .status")
+
+    def _stale_labels_locator(self):
+        container = settings.web_contract.project_cards_container_selector
+        return (By.CSS_SELECTOR, f"{container} .stale")
+
+    def _detail_links_locator(self):
+        container = settings.web_contract.project_cards_container_selector
+        return (By.CSS_SELECTOR, f"{container} a[href*='project.html?project=']")
+
+    def _workflow_links_locator(self):
+        container = settings.web_contract.project_cards_container_selector
+        return (By.CSS_SELECTOR, f"{container} a[target='_blank']")
 
     @staticmethod
     def _dashboard_url() -> str:
         base = settings.base_url
         path = urlparse(base).path.lower()
-        if path.endswith("dashboard.html"):
+        dashboard_path = settings.web_contract.dashboard_path
+        if path.endswith(dashboard_path.lower()):
             return base
         normalized = base if base.endswith("/") else f"{base}/"
-        return urljoin(normalized, "dashboard.html")
+        return urljoin(normalized, dashboard_path)
 
     def open(self):
         super().open(self._dashboard_url())
@@ -34,24 +50,30 @@ class PortfolioHomePage(BasePage):
         return self.text_of(self.LEDE)
 
     def project_cards(self):
-        self.wait.until(EC.presence_of_all_elements_located(self.PROJECT_CARDS))
-        return self.driver.find_elements(*self.PROJECT_CARDS)
+        locator = self._project_cards_locator()
+        self.wait.until(EC.presence_of_all_elements_located(locator))
+        return self.driver.find_elements(*locator)
 
     def status_badges(self):
-        self.wait.until(EC.presence_of_all_elements_located(self.STATUS_BADGES))
-        return self.driver.find_elements(*self.STATUS_BADGES)
+        locator = self._status_badges_locator()
+        self.wait.until(EC.presence_of_all_elements_located(locator))
+        return self.driver.find_elements(*locator)
 
     def stale_labels(self):
-        self.wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#project-cards .card")))
-        return self.driver.find_elements(*self.STALE_LABELS)
+        cards_locator = self._project_cards_locator()
+        stale_locator = self._stale_labels_locator()
+        self.wait.until(EC.presence_of_all_elements_located(cards_locator))
+        return self.driver.find_elements(*stale_locator)
 
     def detail_links(self):
-        self.wait.until(EC.presence_of_all_elements_located(self.DETAIL_LINKS))
-        return self.driver.find_elements(*self.DETAIL_LINKS)
+        locator = self._detail_links_locator()
+        self.wait.until(EC.presence_of_all_elements_located(locator))
+        return self.driver.find_elements(*locator)
 
     def workflow_links(self):
-        self.wait.until(EC.presence_of_all_elements_located(self.WORKFLOW_LINKS))
-        return self.driver.find_elements(*self.WORKFLOW_LINKS)
+        locator = self._workflow_links_locator()
+        self.wait.until(EC.presence_of_all_elements_located(locator))
+        return self.driver.find_elements(*locator)
 
     def open_first_project_detail(self):
         self.detail_links()[0].click()

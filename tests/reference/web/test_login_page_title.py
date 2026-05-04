@@ -1,6 +1,8 @@
 import pytest
 
+from core.config import settings
 from pages.portfolio_page import PortfolioHomePage
+from tests.reference.web.assertions import assert_text_matches_keywords
 
 
 @pytest.mark.web
@@ -8,4 +10,8 @@ from pages.portfolio_page import PortfolioHomePage
 def test_login_page_title(driver):
     page = PortfolioHomePage(driver)
     page.open()
-    assert "Live Automation Results" in driver.title
+    assert_text_matches_keywords(
+        driver.title,
+        settings.web_contract.title_keywords,
+        label="dashboard title",
+    )

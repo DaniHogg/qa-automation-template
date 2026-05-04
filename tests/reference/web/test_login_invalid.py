@@ -1,6 +1,8 @@
 import pytest
 
+from core.config import settings
 from pages.portfolio_page import PortfolioHomePage
+from tests.reference.web.assertions import assert_text_matches_keywords
 
 
 @pytest.mark.web
@@ -8,4 +10,8 @@ from pages.portfolio_page import PortfolioHomePage
 def test_home_lede_explains_dashboard_scope(driver):
     page = PortfolioHomePage(driver)
     page.open()
-    assert "Latest CI run status" in page.lede_text()
+    assert_text_matches_keywords(
+        page.lede_text(),
+        settings.web_contract.lede_keywords,
+        label="dashboard lede",
+    )

@@ -98,9 +98,17 @@ Target site: `danihogg.github.io/qa-portfolio-livesite`
 | Variable | Default | Description |
 |--------|--------|-------------|
 | BASE_URL | https://danihogg.github.io/qa-portfolio-livesite/ | Web target |
+| WEB_TARGET_PROFILE | qa_portfolio_live_site | Contract profile for web routes/selectors/keyword expectations |
+| WEB_DASHBOARD_PATH | dashboard.html | Dashboard route appended to BASE_URL when BASE_URL is site root |
+| WEB_PROJECT_CARDS_SELECTOR | #project-cards | CSS selector for the dashboard project-cards container |
+| WEB_HEADING_KEYWORDS | automation,results,evidence | Comma-separated keywords accepted for dashboard heading checks |
+| WEB_TITLE_KEYWORDS | automation,results,evidence | Comma-separated keywords accepted for page-title checks |
+| WEB_LEDE_KEYWORDS | ci,status,workflow | Comma-separated keywords accepted for dashboard lede checks |
 | API_BASE_URL | https://jsonplaceholder.typicode.com | API target |
 | BROWSER | chrome | chrome or firefox |
 | HEADLESS | true | CI-friendly execution |
+
+Web smoke/regression text checks are intent-based: tests assert that heading/title/lede include at least one profile keyword, rather than exact marketing copy.
 
 ### CI Lanes
 - `quick-linux` (push/pull request): unit + API smoke + web smoke against portfolio site.
