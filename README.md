@@ -75,7 +75,7 @@ This structure mirrors what I’ve seen work effectively in real QA teams.
 ## ✅ Test Coverage
 
 ### API Tests
-Target API: `jsonplaceholder.typicode.com`
+Target API in CI: `https://qa-portfolio-api.onrender.com` (with `API_TARGET_PROFILE=jsonplaceholder`)
 
 - Smoke
   - Basic availability and response validation
@@ -116,6 +116,8 @@ Target site: `danihogg.github.io/qa-portfolio-livesite`
 | API_CONTENT_TYPE | application/json | Expected Content-Type header in API responses |
 | BROWSER | chrome | chrome or firefox |
 | HEADLESS | true | CI-friendly execution |
+
+`API_BASE_URL` is environment-driven. Local runs can keep the default (`jsonplaceholder`) or override to your deployed backend, for example `https://qa-portfolio-api.onrender.com`.
 
 **Web tests** check heading/title/lede with intent-based keyword matching (configurable via comma-separated env vars), not exact copy.
 **API tests** are profile-driven: timeouts, status codes, and performance thresholds come from the contract, making it easy to adapt to different targets or service-level expectations.

@@ -35,7 +35,7 @@ jobs:
 
       - name: Run api smoke tests
         env:
-          API_BASE_URL: https://jsonplaceholder.typicode.com
+          API_BASE_URL: https://qa-portfolio-api.onrender.com
           API_TARGET_PROFILE: jsonplaceholder
         run: pytest tests/api tests/reference/api -m "api and smoke" --alluredir=allure-results
 
@@ -80,13 +80,13 @@ jobs:
 
       - name: Run api smoke tests
         env:
-          API_BASE_URL: https://jsonplaceholder.typicode.com
+          API_BASE_URL: https://qa-portfolio-api.onrender.com
           API_TARGET_PROFILE: jsonplaceholder
         run: pytest tests/api tests/reference/api -m "api and smoke" --alluredir=allure-results
 
       - name: Run api regression tests
         env:
-          API_BASE_URL: https://jsonplaceholder.typicode.com
+          API_BASE_URL: https://qa-portfolio-api.onrender.com
           API_TARGET_PROFILE: jsonplaceholder
         run: pytest tests/reference/api -m "api and regression" --alluredir=allure-results
 
