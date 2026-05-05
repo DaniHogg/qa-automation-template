@@ -37,6 +37,7 @@ jobs:
         env:
           API_BASE_URL: https://qa-portfolio-api.onrender.com
           API_TARGET_PROFILE: jsonplaceholder
+          API_REQUEST_TIMEOUT: "30"
         run: pytest tests/api -m "api and smoke" --alluredir=allure-results
 
       - name: Run web smoke tests
@@ -82,12 +83,14 @@ jobs:
         env:
           API_BASE_URL: https://qa-portfolio-api.onrender.com
           API_TARGET_PROFILE: jsonplaceholder
+          API_REQUEST_TIMEOUT: "30"
         run: pytest tests/api -m "api and smoke" --alluredir=allure-results
 
       - name: Run api regression tests
         env:
           API_BASE_URL: https://qa-portfolio-api.onrender.com
           API_TARGET_PROFILE: jsonplaceholder
+          API_REQUEST_TIMEOUT: "30"
         run: pytest tests/api -m "api and regression" --alluredir=allure-results
 
       - name: Run web smoke tests against portfolio site
