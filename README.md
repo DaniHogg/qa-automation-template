@@ -123,8 +123,8 @@ Target site: `danihogg.github.io/qa-portfolio-livesite`
 **API tests** are profile-driven: timeouts, status codes, and performance thresholds come from the contract, making it easy to adapt to different targets or service-level expectations.
 
 ### CI Lanes
-- `quick-linux` (push/pull request): unit + API smoke + web smoke against portfolio site.
-- `full-linux` (workflow_dispatch/schedule): unit + API smoke/regression + web smoke/regression against portfolio site.
+- `quick-linux` (pull request): unit + API smoke + web smoke against portfolio site.
+- `full-linux` (push/workflow_dispatch/schedule): unit + API smoke/regression + web smoke/regression against portfolio site.
 - `winapp-windows` (workflow_dispatch/schedule): Windows desktop reference tests with WinAppDriver.
 - `merge-allure`: merges all available lane artifacts into `allure-results` for downstream portfolio ingestion.
 
